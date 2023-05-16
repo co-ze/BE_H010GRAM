@@ -7,6 +7,10 @@ import com.hanghae.be_h010gram.domain.post.service.PostService;
 import com.hanghae.be_h010gram.security.auth.UserDetailsImpl;
 import com.hanghae.be_h010gram.util.ResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -23,8 +27,9 @@ public class PostController {
 
     // 목록 조회
     @GetMapping
-    public ResponseDto<List<MainPostResponseDto>> getAllPosts() {
-        return postService.getAllPosts();
+    public ResponseDto<Slice<MainPostResponseDto>> getAllPosts(@RequestParam("lastPostId") Long lastPostId,
+                                                               @RequestParam("size") int size) {
+        return postService.getAllPosts(lastPostId, size);
     }
 
     // 상세 조회

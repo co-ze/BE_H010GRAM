@@ -12,8 +12,11 @@ import com.hanghae.be_h010gram.exception.CustomException;
 import com.hanghae.be_h010gram.util.ResponseDto;
 import com.hanghae.be_h010gram.util.S3Service;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -33,12 +36,11 @@ public class PostService {
 
     // 전체 게시물 목록 조회
     @Transactional(readOnly = true)
-    public ResponseDto<List<MainPostResponseDto>> getAllPosts() {
-        List<MainPostResponseDto> mainPostResponseDtos = postRepository
-                .findAllByOrderByCreatedAtDesc()
-                .stream()
-                .map(post -> new MainPostResponseDto(post, commentRepository.countByPostId(post.getId())))
-                .collect(Collectors.toList());
+    public ResponseDto<Slice<MainPostResponseDto>> getAllPosts(Long lastPostId, int size) {
+        //페이징
+        PageRequest pageRequest = PageRequest.of(0, size);
+
+        Slice<MainPostResponseDto> mainPostResponseDtos = postRepository.findByPostIdLessThanOrderByPostIdDesc(lastPostId, pageRequest);
         return ResponseDto.setSuccess("전체 게시물 조회 성공", mainPostResponseDtos);
     }
 

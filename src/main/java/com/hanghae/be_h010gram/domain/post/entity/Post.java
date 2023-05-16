@@ -1,5 +1,6 @@
 package com.hanghae.be_h010gram.domain.post.entity;
 
+import com.hanghae.be_h010gram.domain.comment.entity.Comment;
 import com.hanghae.be_h010gram.domain.member.entity.Member;
 import com.hanghae.be_h010gram.domain.post.dto.PostRequestDto;
 import com.hanghae.be_h010gram.exception.CustomException;
@@ -9,6 +10,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.hanghae.be_h010gram.exception.ExceptionEnum.POST_CONTENT_NOT_FOUND;
 import static com.hanghae.be_h010gram.exception.ExceptionEnum.USER_NOT_FOUND;
@@ -37,6 +41,9 @@ public class Post extends Timestamped {
     @Lob
     private String postImage;
 
+    @OneToMany(mappedBy = "post")
+    private List<Comment> commentList = new ArrayList<>();
+
     public Post(PostRequestDto postRequestDto, Member member) {
         if (member.getId() == null) {
             throw new CustomException(USER_NOT_FOUND);
@@ -57,5 +64,9 @@ public class Post extends Timestamped {
 
     public void updateLike(boolean likeOrDislike) {
         this.liked = likeOrDislike ? this.liked + 1 : this.liked - 1;
+    }
+
+    public void addComment(Comment comment) {
+        this.commentList.add(comment);
     }
 }

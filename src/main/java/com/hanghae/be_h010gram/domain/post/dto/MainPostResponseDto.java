@@ -10,10 +10,10 @@ public class MainPostResponseDto {
     private int commentsCount;
     private String postImage;
 
-    public MainPostResponseDto(Post post, int commentsCount) {
+    public MainPostResponseDto(Post post) {
         this.id = post.getId();
         this.liked = post.getLiked();
-        this.commentsCount = commentsCount;
+        this.commentsCount = post.getCommentList().size();
         this.postImage = post.getPostImage();
     }
 }
